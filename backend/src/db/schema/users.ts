@@ -15,7 +15,9 @@ export const users = pgTable("users", {
     firstName: text("first_name").notNull(),
     lastName: text("last_name").notNull(),
     avatar: text(),
-    about: text().default("Hey there! I am using ChatApp."),
+    about: varchar({ length: 100 }).default(
+        "Hey there! I am using ChatApp."
+    ),
     isOnline: boolean("is_online").default(false).notNull(),
     lastSeen: timestamp("last_seen").defaultNow().notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
