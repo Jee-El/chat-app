@@ -20,7 +20,7 @@ export const updatePasswordSchema = z
 
 export const signupSchema = z
     .object({
-        username: z.string().min(30).max(20),
+        username: z.string().min(3).max(20),
         email: z.email(),
         password: passwordSchema,
         firstName: z.string().nonempty(),
