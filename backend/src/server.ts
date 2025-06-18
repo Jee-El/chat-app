@@ -4,6 +4,7 @@ import { cors } from "hono/cors";
 import { authRoutes } from "./routes/auth";
 import { jwt } from "hono/jwt";
 import { showRoutes } from "hono/dev";
+import { usersRoute } from "./routes/users";
 
 const app = new Hono();
 
@@ -26,11 +27,11 @@ app.use(
 app.use("/api/*", jwt({ secret: Bun.env.SECRET_KEY }));
 
 app.route("/auth", authRoutes);
+app.route("/api/users", usersRoute);
 
 app.get("/", (c) => {
     return c.text("Hello Hono!");
 });
 
 showRoutes(app);
-
 export default app;

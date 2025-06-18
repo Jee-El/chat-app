@@ -22,3 +22,14 @@ export const users = pgTable("users", {
     lastSeen: timestamp("last_seen").defaultNow().notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const profileSelect = {
+    id: users.id,
+    username: users.username,
+    email: users.email,
+    firstName: users.firstName,
+    lastName: users.lastName,
+    avatar: users.avatar,
+    about: users.about,
+    createdAt: users.createdAt,
+};
