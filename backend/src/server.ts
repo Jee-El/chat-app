@@ -1,12 +1,26 @@
 import { Hono } from "hono";
+import type { Context, Next } from "hono";
 import { logger } from "hono/logger";
 import { cors } from "hono/cors";
 import { authRoutes } from "./routes/auth";
 import { jwt } from "hono/jwt";
 import { showRoutes } from "hono/dev";
 import { usersRoute } from "./routes/users";
+import { redis } from "bun";
 
 const app = new Hono();
+
+const jwtBlackListingMiddleWare = async (c: Context, next: Next) => {
+    const { jti } = c.get("jwtPayload");
+
+    const isBlacklisted = await redis.get(jti);
+
+    if (isBlacklisted) {
+        return c.text("Unauthorized", 401);
+    }
+
+    await next();
+};
 
 app.onError((err, c) => {
     console.log("Unhandled error: ", err);
@@ -24,7 +38,13 @@ app.use(
     })
 );
 
-app.use("/api/*", jwt({ secret: Bun.env.SECRET_KEY }));
+app.use(
+    "/api/*",
+    jwt({ secret: Bun.env.SECRET_KEY }),
+    jwtBlackListingMiddleWare
+);
+
+app.use("/auth/logout", jwt({ secret: Bun.env.SECRET_KEY }));
 
 app.route("/auth", authRoutes);
 app.route("/api/users", usersRoute);

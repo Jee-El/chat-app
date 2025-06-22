@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import { loginSchema } from "../../schemas/auth";
-import { z } from "zod/v4";
 import { zValidator } from "@hono/zod-validator";
 import { eq, or } from "drizzle-orm";
 import { db, schema } from "../../db";
@@ -47,6 +46,7 @@ loginRoute.post(
         const accessToken = await new SignJWT({
             id: user.id,
             email: user.email,
+            jti: Bun.randomUUIDv7()
         })
             .setProtectedHeader({ alg: "HS256" })
             .setExpirationTime("20mins")
