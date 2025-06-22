@@ -33,3 +33,9 @@ export const profileSelect = {
     about: users.about,
     createdAt: users.createdAt,
 };
+
+export const { email, ...publicUserSelect } = {
+    ...profileSelect,
+    isOnline: users.isOnline,
+    lastSeen: users.lastSeen,
+};
