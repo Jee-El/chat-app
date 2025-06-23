@@ -4,7 +4,7 @@ import { ilike, sql } from "drizzle-orm";
 
 export const searchRoute = new Hono();
 searchRoute.get("/", async (c) => {
-    const usernameQuery = c.req.param("q");
+    const usernameQuery = c.req.query("q");
 
     const searchResults = await db
         .select(schema.publicUserSelect)
