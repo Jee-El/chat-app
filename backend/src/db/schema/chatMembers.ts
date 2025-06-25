@@ -8,8 +8,6 @@ import {
 import { chats } from "./chats"
 import { users } from "./users"
 
-
-
 export const chatMembers = pgTable("chat_members", {
     id: serial().primaryKey(),
     userId: integer("user_id")

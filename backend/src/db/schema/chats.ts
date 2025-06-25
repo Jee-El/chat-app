@@ -4,11 +4,9 @@ import {
     timestamp,
     boolean,
     serial,
-    integer
+    integer,
 } from "drizzle-orm/pg-core";
-import { users } from "./users"
-
-
+import { users } from "./users";
 
 export const chats = pgTable("chats", {
     id: serial().primaryKey(),

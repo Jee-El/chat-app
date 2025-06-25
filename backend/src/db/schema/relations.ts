@@ -14,7 +14,7 @@ export const usersRelations = relations(users, ({ many }) => ({
     createdChats: many(chats),
 }));
 
-export const chatsRelations = relations(chats, ({ one, many }) => ({
+export const chatsRelations = relations(chats, ({ many }) => ({
     members: many(chatMembers),
     messages: many(messages),
 }));
