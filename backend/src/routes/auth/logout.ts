@@ -8,8 +8,10 @@ logoutRoute.post("/", async (c) => {
 
     const ttl = exp - Math.floor(Date.now() / 1000);
 
-    await redis.set(jti, "blacklisted");
-    await redis.expire(jti, ttl);
+    if (ttl > 0) {
+        await redis.set(jti, "blacklisted");
+        await redis.expire(jti, ttl);
+    }
 
     return c.body(null, 204);
 });
