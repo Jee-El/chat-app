@@ -18,7 +18,6 @@ export const users = pgTable("users", {
     about: varchar({ length: 100 }).default(
         "Hey there! I am using ChatApp."
     ),
-    isOnline: boolean("is_online").default(false).notNull(),
     lastSeen: timestamp("last_seen").defaultNow().notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -36,6 +35,5 @@ export const profileSelect = {
 
 export const { email, ...publicUserSelect } = {
     ...profileSelect,
-    isOnline: users.isOnline,
     lastSeen: users.lastSeen,
 };
