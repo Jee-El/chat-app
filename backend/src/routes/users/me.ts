@@ -5,6 +5,7 @@ import { zValidator } from "@hono/zod-validator";
 import { updateProfileSchema } from "../../schemas/users";
 import { zodErrorHandler } from "../../utils/zodErrorHandler";
 import { updatePasswordSchema } from "../../schemas/auth";
+import { redis } from "bun";
 
 export const meRoute = new Hono();
 
@@ -87,7 +88,7 @@ meRoute.patch(
 );
 
 meRoute.delete("/", async (c) => {
-    const { id } = c.get("jwtPayload");
+    const { id, jti, exp } = c.get("jwtPayload");
 
     const deletedUsers = await db
         .delete(schema.users)
@@ -96,6 +97,12 @@ meRoute.delete("/", async (c) => {
 
     if (deletedUsers.length === 0) {
         return c.text("User not found.", 404);
+    }
+
+    const ttl = exp - Math.floor(Date.now() / 1000);
+    if (ttl > 0) {
+        await redis.set(jti, "blacklisted");
+        await redis.expire(jti, ttl);
     }
 
     return c.body(null, 204);
