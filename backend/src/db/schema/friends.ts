@@ -7,7 +7,7 @@ import {
     unique,
 } from "drizzle-orm/pg-core";
 
-import { users } from "./users"
+import { users } from "./users";
 
 export const friends = pgTable(
     "friends",
@@ -22,9 +22,7 @@ export const friends = pgTable(
         name: text().notNull(),
         createdAt: timestamp("created_at").defaultNow().notNull(),
     },
-    (table) => {
-        return {
-            uniqueFriendship: unique().on(table.userId, table.friendId),
-        };
-    }
+    (table) => [
+        unique("unique_friendship").on(table.userId, table.friendId),
+    ]
 );
