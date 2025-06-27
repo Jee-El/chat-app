@@ -1,16 +1,16 @@
 import { Hono } from "hono";
-import type { Context, Next } from "hono";
 import { logger } from "hono/logger";
 import { cors } from "hono/cors";
-import { authRoutes } from "./routes/auth";
+import { createMiddleware } from "hono/factory";
 import { jwt } from "hono/jwt";
 import { showRoutes } from "hono/dev";
-import { usersRoute } from "./routes/users";
+
 import { redis } from "bun";
+import { authRoutes } from "./routes/auth";
 
 const app = new Hono();
 
-const jwtBlackListingMiddleWare = async (c: Context, next: Next) => {
+const jwtBlackListingMiddleWare = createMiddleware(async (c, next) => {
     const { jti } = c.get("jwtPayload");
 
     const isBlacklisted = await redis.get(jti);
@@ -20,7 +20,7 @@ const jwtBlackListingMiddleWare = async (c: Context, next: Next) => {
     }
 
     await next();
-};
+});
 
 app.onError((err, c) => {
     console.log("Unhandled error: ", err);
