@@ -15,7 +15,6 @@ meRoute.get("/", async (c) => {
     const userProfile = await db.query.users.findFirst({
         columns: {
             password: false,
-            isOnline: false,
             lastSeen: false,
         },
         where: eq(schema.users.id, id),
