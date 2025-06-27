@@ -5,13 +5,14 @@ import {
     boolean,
     serial,
     integer,
+    varchar,
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
 
 export const chats = pgTable("chats", {
     id: serial().primaryKey(),
-    name: text(),
-    description: text(),
+    name: varchar({ length: 50 }),
+    description: varchar({ length: 250 }),
     avatar: text(),
     isGroup: boolean("is_group").default(false).notNull(),
     createdBy: integer("created_by").references(() => users.id),
