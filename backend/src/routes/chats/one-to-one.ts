@@ -5,7 +5,7 @@ import { create1To1ChatSchema } from "../../schemas/chats";
 import { eq } from "drizzle-orm";
 import { db, schema } from "../../db";
 
-const oneToOneChatRoute = new Hono();
+export const oneToOneChatRoute = new Hono();
 
 oneToOneChatRoute.post(
     "/",

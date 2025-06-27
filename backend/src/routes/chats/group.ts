@@ -5,7 +5,7 @@ import { createGroupChatSchema } from "../../schemas/chats";
 import { inArray } from "drizzle-orm";
 import { db, schema } from "../../db";
 
-const groupChatRoute = new Hono();
+export const groupChatRoute = new Hono();
 
 groupChatRoute.post(
     "/",

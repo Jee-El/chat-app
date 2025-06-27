@@ -2,11 +2,14 @@ import { Hono } from "hono";
 import { db, schema } from "../../db";
 import { desc, eq } from "drizzle-orm";
 import { chatRoute } from "./[chatId]/messages";
-
+import { groupChatRoute } from "./group";
+import { oneToOneChatRoute } from "./one-to-one";
 
 export const chatsRoute = new Hono();
 
 chatsRoute.route("/:chatId", chatRoute);
+chatsRoute.route("/group", groupChatRoute);
+chatsRoute.route("/one-to-one", oneToOneChatRoute);
 
 chatsRoute.get("/", async (c) => {
     const { id } = c.get("jwtPayload");

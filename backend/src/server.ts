@@ -10,6 +10,7 @@ import { redis } from "bun";
 import { authRoutes } from "./routes/auth";
 import { usersRoute } from "./routes/users";
 import { chatsRoute } from "./routes/chats";
+import { messagesRoute } from "./routes/messages";
 
 const app = new Hono();
 
@@ -52,6 +53,7 @@ app.use("/auth/logout", jwt({ secret: Bun.env.SECRET_KEY }));
 app.route("/auth", authRoutes);
 app.route("/api/users", usersRoute);
 app.route("/api/chats", chatsRoute);
+app.route("/api/messages", messagesRoute);
 
 app.get("/", (c) => {
     return c.text("Hello Hono!");

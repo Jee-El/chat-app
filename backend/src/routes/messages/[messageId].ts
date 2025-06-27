@@ -8,7 +8,7 @@ import { db, schema } from "../../db";
 export const messageRoute = new Hono();
 
 messageRoute.delete(
-    "/:messageId",
+    "/",
     zValidator("json", idParamSchema, zodErrorHandler),
     async (c) => {
         const { id } = c.get("jwtPayload");
