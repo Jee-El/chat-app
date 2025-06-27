@@ -3,8 +3,11 @@ import { z } from "zod/v4";
 
 export const zodErrorHandler = (result, c: Context) => {
     if (!result.success) {
+        console.log(result, c);
         return c.json({
-            errors: z.flattenError(result.error).fieldErrors,
+            success: false,
+            error: "Validation failed",
+            issues: z.flattenError(result.error).fieldErrors,
         });
     }
 
