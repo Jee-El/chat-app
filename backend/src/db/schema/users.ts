@@ -14,7 +14,7 @@ export const users = pgTable("users", {
     password: text().notNull(),
     firstName: text("first_name").notNull(),
     lastName: text("last_name").notNull(),
-    avatar: text(),
+    avatar: text().notNull(),
     about: varchar({ length: 100 }).default(
         "Hey there! I am using ChatApp."
     ),
