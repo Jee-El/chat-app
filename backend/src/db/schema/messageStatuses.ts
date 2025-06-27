@@ -23,6 +23,6 @@ export const messageStatuses = pgTable("message_statuses", {
     userId: integer("user_id")
         .references(() => users.id, { onDelete: "cascade" })
         .notNull(),
-    status: messageStatusEnum().notNull(),
+    status: messageStatusEnum().notNull().default("SENT" as const),
     timestamp: timestamp().defaultNow().notNull(),
 });
