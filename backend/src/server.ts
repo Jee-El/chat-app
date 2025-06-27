@@ -6,7 +6,10 @@ import { jwt } from "hono/jwt";
 import { showRoutes } from "hono/dev";
 
 import { redis } from "bun";
+
 import { authRoutes } from "./routes/auth";
+import { usersRoute } from "./routes/users";
+import { chatsRoute } from "./routes/chats";
 
 const app = new Hono();
 
@@ -32,7 +35,7 @@ app.use(
     logger(),
     cors({
         origin: ["http://localhost:5173"],
-        allowMethods: ["GET", "POST", "OPTIONS"],
+        allowMethods: ["GET", "POST", "PATCH", "OPTIONS"],
         maxAge: 600,
         credentials: true,
     })
@@ -48,10 +51,12 @@ app.use("/auth/logout", jwt({ secret: Bun.env.SECRET_KEY }));
 
 app.route("/auth", authRoutes);
 app.route("/api/users", usersRoute);
+app.route("/api/chats", chatsRoute);
 
 app.get("/", (c) => {
     return c.text("Hello Hono!");
 });
 
 showRoutes(app);
+
 export default app;
