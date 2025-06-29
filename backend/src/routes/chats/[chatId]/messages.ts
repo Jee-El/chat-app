@@ -133,6 +133,16 @@ chatRoute.post(
                 eq(schema.chatMembers.userId, id),
                 eq(schema.chatMembers.chatId, chatId)
             ),
+            with: {
+                chat: {
+                    with: {
+                        members: {
+                            columns: { userId: true },
+                        },
+                    },
+                    columns: { isGroup: true },
+                },
+            },
             columns: { id: true },
         });
 
@@ -141,6 +151,31 @@ chatRoute.post(
                 { success: false, error: "Access denied" },
                 403
             );
+        }
+
+        if (!isMemberOfChat.chat.isGroup) {
+            const areFriends = await db.query.friends.findFirst({
+                where: and(
+                    eq(
+                        schema.friends.userId,
+                        isMemberOfChat.chat.members[0].userId
+                    ),
+                    eq(
+                        schema.friends.friendId,
+                        isMemberOfChat.chat.members[1].userId
+                    )
+                ),
+            });
+
+            if (!areFriends) {
+                return c.json(
+                    {
+                        success: false,
+                        error: "The recipient is not your friend",
+                    },
+                    403
+                );
+            }
         }
 
         if (replyToId) {
@@ -231,6 +266,6 @@ chatRoute.post(
                     ne(schema.messageStatuses.status, "READ")
                 )
             );
-        return c.json({success: true, data: null}, 200);
+        return c.json({ success: true, data: null }, 200);
     }
 );
