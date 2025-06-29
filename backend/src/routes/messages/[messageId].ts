@@ -1,36 +1,41 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { idParamSchema } from "../../schemas/chats";
+import { idParamSchema } from "../../schemas";
 import { zodErrorHandler } from "../../utils/zodErrorHandler";
 import { eq } from "drizzle-orm";
 import { db, schema } from "../../db";
+import { success } from "zod/v4";
 
 export const messageRoute = new Hono();
 
 messageRoute.delete(
     "/",
-    zValidator("json", idParamSchema, zodErrorHandler),
+    zValidator("param", idParamSchema, zodErrorHandler),
     async (c) => {
         const { id } = c.get("jwtPayload");
-        const messageId = c.req.valid("json").id;
+        const messageId = c.req.valid("param").id;
 
         const belongToUser = await db.query.messages.findFirst({
+            columns: { id: true },
             where: eq(schema.messages.senderId, id),
         });
 
         if (!belongToUser) {
             return c.json(
-                { success: false, error: "Access denied" },
-                403
+                { success: false, error: "Message not found" },
+                404
             );
         }
 
         await db.transaction(async (tx) => {
             await Promise.all([
-                await db.update(schema.messages).set({
-                    content: "This message was deleted",
-                    isDeleted: true,
-                }),
+                await db
+                    .update(schema.messages)
+                    .set({
+                        content: "This message was deleted",
+                        isDeleted: true,
+                    })
+                    .where(eq(schema.messages.id, messageId)),
                 await db
                     .delete(schema.messageStatuses)
                     .where(
@@ -38,6 +43,6 @@ messageRoute.delete(
                     ),
             ]);
         });
-        return c.body(null, 204);
+        return c.json({ success: true, data: null }, 200);
     }
 );

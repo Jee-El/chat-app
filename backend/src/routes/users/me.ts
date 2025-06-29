@@ -21,7 +21,7 @@ meRoute.get("/", async (c) => {
     });
 
     if (!userProfile) {
-        return c.text("User not found.", 404);
+        return c.json({ success: false, error: "User not found." }, 404);
     }
 
     return c.json(userProfile, 200);
@@ -34,19 +34,20 @@ meRoute.patch(
         const { id } = c.get("jwtPayload");
         const dataToUpdate = c.req.valid("json");
 
-        const updatedUserProfiles = await db
+        const [updatedProfile] = await db
             .update(schema.users)
             .set({ ...dataToUpdate })
             .where(eq(schema.users.id, id))
             .returning(schema.profileSelect);
 
-        if (updatedUserProfiles.length === 0) {
-            return c.text("User not found.", 404);
+        if (!updatedProfile) {
+            return c.json(
+                { success: false, error: "User not found." },
+                404
+            );
         }
 
-        const updatedUserProfile = updatedUserProfiles[0];
-
-        return c.json(updatedUserProfile, 200);
+        return c.json({ success: true, data: { updatedProfile } }, 200);
     }
 );
 
@@ -63,7 +64,10 @@ meRoute.patch(
         });
 
         if (!user) {
-            return c.text("User not found.", 404);
+            return c.json(
+                { success: false, error: "User not found." },
+                404
+            );
         }
 
         const validPassword = await Bun.password.verify(
@@ -73,7 +77,10 @@ meRoute.patch(
 
         if (!validPassword) {
             return c.json(
-                { error: "Current password is incorrect." },
+                {
+                    success: false,
+                    error: "Current password is incorrect.",
+                },
                 401
             );
         }
@@ -82,20 +89,20 @@ meRoute.patch(
             .update(schema.users)
             .set({ password: await Bun.password.hash(newPassword) });
 
-        return c.body(null, 204);
+        return c.json({ sucess: true, data: null }, 200);
     }
 );
 
 meRoute.delete("/", async (c) => {
     const { id, jti, exp } = c.get("jwtPayload");
 
-    const deletedUsers = await db
+    const [deletedUser] = await db
         .delete(schema.users)
         .where(eq(schema.users.id, id))
         .returning();
 
-    if (deletedUsers.length === 0) {
-        return c.text("User not found.", 404);
+    if (!deletedUser) {
+        return c.json({ success: false, error: "User not found." }, 404);
     }
 
     const ttl = exp - Math.floor(Date.now() / 1000);
@@ -108,5 +115,5 @@ meRoute.delete("/", async (c) => {
         await redis.expire(jti, ttl);
     }
 
-    return c.body(null, 204);
+    return c.json({ sucess: true, data: null }, 200);
 });

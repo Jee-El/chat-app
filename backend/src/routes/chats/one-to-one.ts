@@ -36,7 +36,7 @@ oneToOneChatRoute.post(
             return c.json(
                 {
                     success: true,
-                    chatId: chatAlreadyExists.id,
+                    data: { chatId: chatAlreadyExists.id },
                 },
                 200
             );
@@ -70,7 +70,7 @@ oneToOneChatRoute.post(
         return c.json(
             {
                 success: true,
-                chatId,
+                data: { chatId },
             },
             200
         );

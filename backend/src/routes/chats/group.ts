@@ -52,6 +52,6 @@ groupChatRoute.post(
             return newChat.id;
         });
 
-        return c.json({ success: true, chatId }, 200);
+        return c.json({ success: true, data: { chatId } }, 200);
     }
 );

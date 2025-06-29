@@ -14,7 +14,7 @@ chatsRoute.route("/one-to-one", oneToOneChatRoute);
 chatsRoute.get("/", async (c) => {
     const { id } = c.get("jwtPayload");
 
-    const userChats = await db
+    const chats = await db
         .select({
             chat: schema.chats,
             member: schema.chatMembers,
@@ -27,5 +27,5 @@ chatsRoute.get("/", async (c) => {
         .where(eq(schema.chatMembers.userId, id))
         .orderBy(desc(schema.chats.updatedAt));
 
-    return c.json({ success: true, userChats }, 200);
+    return c.json({ success: true, data: { chats } }, 200);
 });

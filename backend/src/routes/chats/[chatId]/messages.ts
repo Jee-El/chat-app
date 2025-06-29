@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { db, schema } from "../../../db";
 import { and, desc, eq, inArray, ne, sql } from "drizzle-orm";
-import { idParamSchema } from "../../../schemas/chats";
+import { idParamSchema } from "../../../schemas";
 import {
     messageSchema,
     messagesQuerySchema,
@@ -29,7 +29,10 @@ chatRoute.get(
         });
 
         if (!isMemberOfChat) {
-            return c.text("Chat not found", 404);
+            return c.json(
+                { success: false, error: "Chat not found" },
+                404
+            );
         }
 
         const [chatWithMembers, messages] = await Promise.all([
@@ -97,16 +100,22 @@ chatRoute.get(
 
         const { members, ...chat } = chatWithMembers!;
 
-        return c.json({
-            chat,
-            members,
-            messages: paginatedMessages,
-            pagination: {
-                limit,
-                offset,
-                hasMore,
+        return c.json(
+            {
+                success: true,
+                data: {
+                    chat,
+                    members,
+                    messages: paginatedMessages,
+                    pagination: {
+                        limit,
+                        offset,
+                        hasMore,
+                    },
+                },
             },
-        });
+            200
+        );
     }
 );
 
@@ -180,7 +189,7 @@ chatRoute.post(
             );
         }
 
-        return c.json(newMessage, 201);
+        return c.json({ success: true, data: { newMessage } }, 201);
     }
 );
 
@@ -222,6 +231,6 @@ chatRoute.post(
                     ne(schema.messageStatuses.status, "READ")
                 )
             );
-        return c.body(null, 204);
+        return c.json({success: true, data: null}, 200);
     }
 );

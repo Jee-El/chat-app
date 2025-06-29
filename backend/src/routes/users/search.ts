@@ -13,5 +13,5 @@ searchRoute.get("/", async (c) => {
         .orderBy(sql`LENGTH(${schema.users.username})`)
         .limit(6);
 
-    return c.json(searchResults, 200);
+    return c.json({ sucess: true, data: { searchResults } }, 200);
 });
