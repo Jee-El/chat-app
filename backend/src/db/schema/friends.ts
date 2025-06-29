@@ -19,7 +19,6 @@ export const friends = pgTable(
         friendId: integer("friend_id")
             .references(() => users.id, { onDelete: "cascade" })
             .notNull(),
-        name: text().notNull(),
         createdAt: timestamp("created_at").defaultNow().notNull(),
     },
     (table) => [
