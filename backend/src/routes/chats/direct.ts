@@ -5,9 +5,9 @@ import { create1To1ChatSchema } from "../../schemas/chats";
 import { eq } from "drizzle-orm";
 import { db, schema } from "../../db";
 
-export const oneToOneChatRoute = new Hono();
+export const directChatRoute = new Hono();
 
-oneToOneChatRoute.post(
+directChatRoute.post(
     "/",
     zValidator("json", create1To1ChatSchema, zodErrorHandler),
     async (c) => {
