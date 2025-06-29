@@ -5,6 +5,7 @@ import { messages } from "./messages";
 import { chatMembers } from "./chatMembers";
 import { messageStatuses } from "./messageStatuses";
 import { friends } from "./friends";
+import { friendRequests } from "./friendRequests";
 
 export const usersRelations = relations(users, ({ many }) => ({
     sentMessages: many(messages),
@@ -71,3 +72,17 @@ export const friendsRelations = relations(friends, ({ one }) => ({
         references: [users.id],
     }),
 }));
+
+export const friendRequestsRelations = relations(
+    friendRequests,
+    ({ one }) => ({
+        sender: one(users, {
+            fields: [friendRequests.senderId],
+            references: [users.id],
+        }),
+        receiver: one(users, {
+            fields: [friendRequests.receiverId],
+            references: [users.id],
+        }),
+    })
+);

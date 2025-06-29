@@ -11,6 +11,7 @@ import { authRoutes } from "./routes/auth";
 import { usersRoute } from "./routes/users";
 import { chatsRoute } from "./routes/chats";
 import { messagesRoute } from "./routes/messages";
+import { friendsRoute } from "./routes/friends";
 
 const app = new Hono();
 
@@ -54,6 +55,7 @@ app.route("/auth", authRoutes);
 app.route("/api/users", usersRoute);
 app.route("/api/chats", chatsRoute);
 app.route("/api/messages", messagesRoute);
+app.route("/api/friends", friendsRoute);
 
 app.get("/", (c) => {
     return c.text("Hello Hono!");
